@@ -58,6 +58,22 @@ MimcPlugin.install = function (Vue, options) {
                 })
             })
         },
+        // pushMessage
+        pushMessage(payload){
+            axios.post('/public/message/push', {
+                "msgType": "NORMAL_MSG",
+                "payload": payload
+            })
+            .then(response => {
+                console.log(response.data)
+                if(response.data['code'] != 200){
+                    setTimeout(()=> this.pushMessage(payload), 300)
+                }
+            })
+            .catch(()=>{
+                setTimeout(()=> this.pushMessage(payload), 300)
+            })
+        },
         // 登录
         login(callback){
             try{
@@ -139,17 +155,12 @@ MimcPlugin.install = function (Vue, options) {
             }
             
             var jsonBase64Msg = window.Base64.encode(JSON.stringify(messageJson))
-
+            
             // 过滤不入库
             if(!(type == "contacts" || type == "pong" || type == "welcome" || type == "handshake" || type == "search_knowledge")){
-                // 发送给机器人入库
-                const intoMessageJson = {
-                    "biz_type": "into",
-                    "payload": jsonBase64Msg
-                }
-                const intoJsonBase64Msg = window.Base64.encode(JSON.stringify(intoMessageJson))
-                this.user.sendMessage(this.robot.id.toString(), intoJsonBase64Msg);
-                // console.log("发送给机器人入库", intoMessageJson)
+
+                // 消息入库
+                this.pushMessage(window.Base64.encode(jsonBase64Msg))
             }
 
             setTimeout(()=>{

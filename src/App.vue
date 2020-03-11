@@ -905,7 +905,7 @@ export default {
             this.messages = messages.concat(this.messages)
           }
         }).catch((error)=>{
-          console.log(error.response.data.message)
+          console.log(error)
       })
       
     },
