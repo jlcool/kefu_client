@@ -96,7 +96,7 @@
                   <template v-if="item.biz_type == 'end'">
                     <div class="system">
                       <div class="content">
-                        <span>本次会话结束，感谢您的耐心与支持！</span>
+                        <span>本次会话结束，感谢您的支持！</span>
                       </div>
                     </div>
                   </template>
@@ -105,7 +105,7 @@
                   <template v-if="item.biz_type == 'timeout'">
                     <div class="system">
                       <div class="content">
-                        <span>会话超时，系统结束了本次会话</span>
+                        <span>{{item.payload}}</span>
                       </div>
                     </div>
                   </template>
@@ -733,6 +733,7 @@ export default {
     },
     // 接收消息
     receiveP2PMsg(message){
+      console.log(message)
       // 是否是转接客服消息
       if(message.biz_type == "transfer"){
         this.isArtificial = true
@@ -895,7 +896,7 @@ export default {
           }
         })
         .then(response => {
-          let messages = response.data.data.list
+          let messages = response.data.data.list || []
           if(messages.length < pageSize) this.isLoadMorEnd = true;
           if(this.messages.length == 0 && messages.length > 0){
             this.messages = response.data.data.list.map((i) => this.handlerMessage(i))
